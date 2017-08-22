@@ -9,12 +9,11 @@ export class Map {
     constructor (size) {
         this.width = size.x;
         this.height = size.y;
-        this.map = matrix(this.width, this.height);
+        this.map = matrix(this.width, this.height, {code: 0, biome: null});
     }
 
     console () {
         let colors = [];
-        console.log('biomeCodes', BiomeCodes);
 
         let coloredMap = this.map.map(arr=>{
             let innerColors = [];
@@ -30,18 +29,22 @@ export class Map {
         });
     }
 
-    draw (biomes) {
-        drawMap(this.map, biomes);
+    draw () {
+        drawMap(this.map);
     }
 
-    setTile (pos, code) {
-        this.map[pos.y][pos.x] = code;
+    setTileBiome (pos, biome) {
+        this.map[pos.y][pos.x] = {
+            ...this.map[pos.y][pos.x],
+            biome: biome,
+            code: biome.code
+        };
     }
 
     iterate(fn) {
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                this.map[y][x] = fn(this.map[y][x], {x,y});
+                fn(this.map[y][x], {x,y});
             }
         }
     }

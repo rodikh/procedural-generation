@@ -3,13 +3,17 @@
  */
 
 import {BiomeTypes, Biome} from "./biomes.js";
-import {weightedRandomItemFromObject, distance} from "./utils.js";
+import {distance} from "./utils.js";
 import {generateRandomPoints} from "./voronoi.js";
+import RNG from "./rng.js";
 
 export class Procedural {
     constructor(map) {
         this.map = map;
         this.generateBiomeCores();
+        this.expandBiomeCores();
+        this.mergeBiomes();
+        console.log('biomes', this.biomes, this.map);
     }
 
     generateBiomeCores() {
@@ -18,33 +22,36 @@ export class Procedural {
         const avgBiomeSize = 30;
         const biomeCount = mapSize / avgBiomeSize;
 
-        generateRandomPoints(this.map.width, this.map.height, biomeCount).forEach(biomePos => {
+        generateRandomPoints(this.map.width, this.map.height, biomeCount, 'world-generation').forEach((biomePos, index) => {
             let biome = {
+                id: index,
                 pos: biomePos,
-                ...weightedRandomItemFromObject(BiomeTypes)
+                ...RNG.weightedRandomItemFromObject(BiomeTypes, 'world-generation')
             };
             this.biomes.push(biome);
 
-            this.map.setTile(biomePos, biome.code);
+            this.map.setTileBiome(biomePos, biome);
         });
 
         this.map.draw(this.biomes);
-        console.log('biomes', this.biomes);
-
-        this.expandBiomeCores();
-        this.map.draw(this.biomes);
-        this.map.console();
-
     }
 
     expandBiomeCores() {
         this.map.iterate((val, pos) => {
-            if (val !== 0) {
+            if (val.biome) {
                 return val;
             }
             let sorted = [...this.biomes].sort((a,b)=>distance(pos, a.pos) - distance(pos, b.pos));
-            let closest = sorted[0];
-            return closest.code;
+            this.map.setTileBiome(pos,sorted[0]);
         });
+        this.map.draw();
     }
+
+    mergeBiomes() {
+
+    }
+
+    // mergeBiomesRecursive() {
+    //     if ()
+    // }
 }

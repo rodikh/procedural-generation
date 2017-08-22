@@ -1,12 +1,22 @@
 /**
  * Created by rodik on 18/08/2017.
  */
-import {point, randomInt} from "./utils.js";
+import {Point} from "./utils.js";
+import RNG from "./rng.js";
 
-export function generateRandomPoints(width, height, numOfPoints) {
+export function generateRandomPoints(width, height, numOfPoints, randomizerKey = 'generateRandomPoints') {
+    if (width*height < numOfPoints) {
+        throw 'Cannot generate non-overlapping random points, width*height is too small for amount of requested points';
+    }
+
     let points = [];
-    for (let i = 0; i < numOfPoints; i++) {
-        points.push(point(randomInt(0,width-1), randomInt(0,height-1)))
+    while(points.length < numOfPoints) {
+        let pt = Point(RNG.nextIntForKey(randomizerKey, 0, width - 1), RNG.nextIntForKey(randomizerKey, 0, height - 1));
+        if (points.findIndex(el => el.x === pt.x && el.y === pt.y) !== -1) {
+            console.log('exists', pt);
+        } else {
+            points.push(pt);
+        }
     }
     return points;
 }
