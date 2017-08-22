@@ -5,11 +5,25 @@ import {BiomeTypes, BiomeCodes, Biome} from "./biomes.js";
 import {matrix} from "./utils.js";
 import {drawMap} from "./graphics.js";
 
+/**
+ * @class Map
+ */
 export class Map {
     constructor (size) {
         this.width = size.x;
         this.height = size.y;
         this.map = matrix(this.width, this.height, {code: 0, biome: null});
+    }
+
+    setBiomes () {
+
+    }
+
+    getTile (x,y) {
+        if (typeof x === "object") {
+            return this.map[x.y][x.x];
+        }
+        return this.map[y][x];
     }
 
     console () {
@@ -39,8 +53,12 @@ export class Map {
             biome: biome,
             code: biome.code
         };
+        biome.addTiles(this.map[pos.y][pos.x]);
     }
 
+    /**
+     * @param {Map~iterationCallback} fn - iterate over every cell of the map
+     */
     iterate(fn) {
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
@@ -48,5 +66,9 @@ export class Map {
             }
         }
     }
+    /**
+     * @callback Map~iterationCallback
+     * @param {{code,biome}} val
+     * @param {{x:number,y:number}} pos
+     */
 }
-

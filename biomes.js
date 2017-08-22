@@ -36,7 +36,27 @@ Object.keys(BiomeTypes).forEach(key => {
 
 
 export class Biome {
-    constructor(type) {
+    constructor(id, pos, biomeType) {
+        this.id = id;
+        this.pos = pos;
+        Object.keys(biomeType).forEach(key => {
+            this[key] = biomeType[key];
+        });
 
+        this.tiles = [];
+    }
+
+    addTiles(tiles) {
+        if (Array.isArray(tiles)) {
+            this.tiles = this.tiles.concat(tiles);
+            tiles.forEach(tile=>{
+                tile.biome = this;
+                tile.code = this.code;
+            });
+        } else {
+            this.tiles.push(tiles);
+            tiles.biome = this;
+            tiles.code = this.code;
+        }
     }
 }

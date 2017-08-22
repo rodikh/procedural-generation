@@ -33,12 +33,18 @@ export function drawMap(tableData, biomes) {
             var cell = document.createElement('td');
             let biomeCode = cellData.code || 0;
             cell.appendChild(document.createTextNode(biomeCode));
+            if (cellData.biome){
+                let biomeId = document.createElement('span');
+                biomeId.appendChild(document.createTextNode(cellData.biome.id));
+                biomeId.style = "font-size: 9px;";
+                cell.appendChild(biomeId);
+            }
             if (cellData.biome && cellData.biome.pos.x === indexX && cellData.biome.pos.y === indexY) {
                 cell.style = 'color:'+BiomeCodes[biomeCode].color+'; font-weight:bold;';
             } else {
                 cell.style = 'color:'+BiomeCodes[biomeCode].color;
             }
-            cell.title = JSON.stringify(cellData, null, 4);
+            // cell.title = JSON.stringify(cellData, null, 4);
             row.appendChild(cell);
         });
 
