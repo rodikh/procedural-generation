@@ -46,6 +46,7 @@ export function drawMap(tableData, biomes) {
             }
             // cell.title = JSON.stringify(cellData, null, 4);
             row.appendChild(cell);
+            cellData.el = cell;
         });
 
         tableBody.appendChild(row);

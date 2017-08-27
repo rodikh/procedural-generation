@@ -7,7 +7,9 @@ export function Point(x,y) {
 }
 
 export function distance(pos1, pos2) {
-    return Math.abs(pos2.x-pos1.x) + Math.abs(pos2.y-pos1.y);
+    const a = pos1.x - pos2.x;
+    const b = pos1.y - pos2.y;
+    return Math.sqrt(a * a + b * b);
 }
 
 export function matrix(m, n, fill) {

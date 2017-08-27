@@ -7,5 +7,6 @@ import {Map} from "./map.js";
 import {Procedural} from "./procedural.js";
 
 RNG.initWithSeed(new Date().getTime());
-export let map = new Map({x:20,y:15});
+// RNG.initWithSeed(1503864909229);
+export let map = new Map({x:30,y:30});
 export let proc = new Procedural(map);

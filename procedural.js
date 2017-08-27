@@ -3,16 +3,24 @@
  */
 
 import {BiomeTypes, Biome} from "./biomes.js";
+import BiomeCustomizer from './biome-customizer.js';
+
 import {distance} from "./utils.js";
 import {generateRandomPoints} from "./voronoi.js";
 import RNG from "./rng.js";
 
+export const ProceduralSettings = {
+    avgBiomeSize: 30
+};
+
 export class Procedural {
     constructor(map) {
         this.map = map;
+        map.proceduralSettings = ProceduralSettings;
         this.generateBiomeCores();
         this.expandBiomeCores();
         this.mergeBiomes();
+        this.personalizeBiomes();
         console.log('biomes', this.biomes, this.map);
         this.map.draw();
     }
@@ -20,8 +28,7 @@ export class Procedural {
     generateBiomeCores() {
         this.biomes = [];
         const mapSize = this.map.width * this.map.height;
-        const avgBiomeSize = 30;
-        const biomeCount = mapSize / avgBiomeSize;
+        const biomeCount = mapSize / ProceduralSettings.avgBiomeSize;
 
         generateRandomPoints(this.map.width, this.map.height, biomeCount, 'world-generation').forEach((biomePos, index) => {
             let biome = new Biome(
@@ -42,6 +49,7 @@ export class Procedural {
                 return val;
             }
             let sorted = [...this.biomes].sort((a, b) => distance(pos, a.pos) - distance(pos, b.pos));
+            // let distances = sorted.map(item=> distance(pos,item.pos));  // uncomment for debug
             this.map.setTileBiome(pos, sorted[0]);
         });
         this.map.draw();
@@ -49,20 +57,35 @@ export class Procedural {
 
     mergeBiomes() {
         this.map.iterate((val, {x, y}) => {
-            let nextY = (y + 1 < this.map.height) ? this.map.getTile(x, y + 1) : null;
-            let nextX = (x + 1 < this.map.width) ? this.map.getTile(x + 1, y) : null;
-            if (nextX && nextX.biome.code === val.biome.code && nextX.biome.id !== val.biome.id) {
-                let tiles = nextX.biome.tiles;
-                let delIndex = this.biomes.findIndex(biome => biome.id === nextX.biome.id);
-                this.biomes.splice(delIndex, 1);
-                val.biome.addTiles(tiles);
-            }
-            if (nextY && nextY.biome.code === val.biome.code && nextY.biome.id !== val.biome.id) {
-                let tiles = nextY.biome.tiles;
-                let delIndex = this.biomes.findIndex(biome => biome.id === nextY.biome.id);
-                this.biomes.splice(delIndex, 1);
-                val.biome.addTiles(tiles);
-            }
+            this.map.iterateTileNeighbors({x,y},true,(nextTile, {x:nx, y:ny}) => {
+                if (nx!==x && ny!==y) {     // no diagonal checking
+                    return;
+                }
+
+                if (nextTile.biome.code === val.biome.code && nextTile.biome.id !== val.biome.id) {   // different biomes with same type
+                    let tiles = nextTile.biome.tiles;
+                    let delIndex = this.biomes.findIndex(biome => biome.id === nextTile.biome.id);
+                    this.biomes.splice(delIndex, 1);
+                    val.biome.addTiles(tiles);
+                }
+            });
+        });
+
+        // // find neighbors
+        this.map.iterate((val, pos) => {
+            this.map.iterateTileNeighbors(pos,false,(nextTile) => {
+                if (nextTile.biome !== val.biome) {
+                    val.biome.neighbors[nextTile.biome.id] = nextTile.biome;
+                    nextTile.biome.neighbors[val.biome.id] = val.biome;
+                }
+            });
+        });
+    }
+
+    personalizeBiomes() {
+        this.biomes.forEach(biome=>{
+            BiomeCustomizer.discoverFeatures(biome,this.map);
+            biome.name = BiomeCustomizer.generateBiomeName(biome);
         });
     }
 }
