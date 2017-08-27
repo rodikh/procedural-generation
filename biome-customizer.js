@@ -28,10 +28,16 @@ const BiomeNaming = {
     },
     "Mountains": {
         'small': ['Hills', 'Crags'],
-        'medium': ['Mountain', 'Mt. $noun' , 'Har'],
+        'medium': ['Mountain', 'Mt. $noun', 'Har'],
         'large': ['Heights']
     }
 };
+
+const NameTemplates = [
+    '$adj $featureName',
+    '$featureName of $noun'
+];
+
 
 export default class BiomeCustomizer {
     static discoverFeatures(biome, map) {
@@ -44,24 +50,33 @@ export default class BiomeCustomizer {
 
     static generateBiomeName(biome) {
         let featureTemplate;
-        let feature = biome.features[RNG.nextIntForKey('biome-customizer', 0, biome.features.length)];
+        let nameTemplate = NameTemplates[RNG.nextIntForKey('biome-customizer', NameTemplates.length)];
+        let feature = biome.features[RNG.nextIntForKey('biome-customizer', biome.features.length)];
         if (feature) {
             let nameArr = BiomeNaming[biome.type][feature];
             if (nameArr) {
-                featureTemplate = nameArr[RNG.nextIntForKey('biome-customizer', 0, nameArr.length)]
+                featureTemplate = nameArr[RNG.nextIntForKey('biome-customizer', nameArr.length)]
             }
         }
 
         if (featureTemplate) {
 
-            let str = adjectives[RNG.nextIntForKey('biome-customizer',0,adjectives.length)] + ' ' + featureTemplate;
-            // let str = adjectives[RNG.nextIntForKey('biome-customizer',0,adjectives.length)] + ' ' + featureTemplate + ' of the ' +
-            //     nouns[RNG.nextIntForKey('biome-customizer',0,nouns.length-1)];
+            let str = nameTemplate;
 
-            str = str.replace(/\$noun/g, function(txt){return nouns[RNG.nextIntForKey('biome-customizer',0,nouns.length)]});
-            str = str.replace(/\$adj/g, function(txt){return adjectives[RNG.nextIntForKey('biome-customizer',0,adjectives.length)]});
+            str = str.replace(/\$featureName/g, function (txt) {
+                return featureTemplate;
+            });
 
-            str = str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+            str = str.replace(/\$noun/g, function (txt) {
+                return nouns[RNG.nextIntForKey('biome-customizer', 0, nouns.length)]
+            });
+            str = str.replace(/\$adj/g, function (txt) {
+                return adjectives[RNG.nextIntForKey('biome-customizer', 0, adjectives.length)]
+            });
+
+            str = str.replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
             return str;
         }
 
@@ -83,14 +98,14 @@ const BiomeFeatures = {
     },
     island: (biome, map) => {
         if (biome.type !== 'Sea' && Object.keys(biome.neighbors).length === 1 && biome.neighbors[Object.keys(biome.neighbors)[0]].type === 'Sea') {
-            if (biome.features.indexOf('small') !==-1 || biome.features.indexOf('medium') !==-1 ) {
+            if (biome.features.indexOf('small') !== -1 || biome.features.indexOf('medium') !== -1) {
                 biome.features.push('island');
             }
         }
     },
-    oasis:(biome, map) => {
+    oasis: (biome, map) => {
         if (biome.type === 'Sea' && Object.keys(biome.neighbors).length === 1 && biome.neighbors[Object.keys(biome.neighbors)[0]].type === 'Desert') {
-            if (biome.features.indexOf('small') !==-1){
+            if (biome.features.indexOf('small') !== -1) {
                 biome.features.push('oasis');
             }
         }
