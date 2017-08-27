@@ -10,7 +10,7 @@ import {generateRandomPoints} from "./voronoi.js";
 import RNG from "./rng.js";
 
 export const ProceduralSettings = {
-    avgBiomeSize: 10
+    avgBiomeSize: 25
 };
 
 export class Procedural {
