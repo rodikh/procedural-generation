@@ -11,7 +11,7 @@ export function generateRandomPoints(width, height, numOfPoints, randomizerKey =
 
     let points = [];
     while(points.length < numOfPoints) {
-        let pt = Point(RNG.nextIntForKey(randomizerKey, 0, width - 1), RNG.nextIntForKey(randomizerKey, 0, height - 1));
+        let pt = Point(RNG.nextIntForKey(randomizerKey, 0, width), RNG.nextIntForKey(randomizerKey, 0, height));
         if (points.findIndex(el => el.x === pt.x && el.y === pt.y) !== -1) {
             console.log('exists', pt);
         } else {

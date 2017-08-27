@@ -6,7 +6,26 @@ import RNG from "./rng.js";
 import {Map} from "./map.js";
 import {Procedural} from "./procedural.js";
 
-RNG.initWithSeed(new Date().getTime());
-// RNG.initWithSeed(1503864909229);
-export let map = new Map({x:30,y:30});
-export let proc = new Procedural(map);
+export let map;
+export let proc;
+
+function startSim(seed) {
+    RNG.initWithSeed(seed);
+    map = new Map({x: 30, y: 30});
+    proc = new Procedural(map);
+}
+
+document.querySelector('#seed-form').onsubmit = (evt) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+    let seed = document.querySelector('#input-seed').value;
+    let shouldTimeout = document.querySelector('#shouldTimeout').checked;
+    let timeout = 0;
+    if (shouldTimeout) {
+        timeout = document.querySelector('#timeout').value;
+        console.log('checked', timeout);
+    }
+    startSim(seed, timeout);
+};
+
+startSim(new Date().getTime());

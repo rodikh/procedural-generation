@@ -13,6 +13,7 @@ export class Map {
         this.width = size.x;
         this.height = size.y;
         this.map = matrix(this.width, this.height, {code: 0, biome: null});
+        this.biomes = [];
     }
 
     getTile(x, y) {
@@ -40,7 +41,7 @@ export class Map {
     }
 
     draw() {
-        drawMap(this.map);
+        drawMap(this.map, this.biomes);
     }
 
     setTileBiome(pos, biome) {

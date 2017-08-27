@@ -41,6 +41,7 @@ export function drawMap(tableData, biomes) {
             }
             if (cellData.biome && cellData.biome.pos.x === indexX && cellData.biome.pos.y === indexY) {
                 cell.style = 'color:'+BiomeCodes[biomeCode].color+'; font-weight:bold;';
+                cellData.biome.el = cell;
             } else {
                 cell.style = 'color:'+BiomeCodes[biomeCode].color;
             }
@@ -53,4 +54,15 @@ export function drawMap(tableData, biomes) {
     });
 
     table.appendChild(tableBody);
+
+    let overlay = document.querySelector('#overlay');
+    overlay.innerHTML = "";
+    biomes.forEach(biome=>{
+        let label = document.createElement('div');
+        label.appendChild(document.createTextNode(biome.name));
+        label.className = 'biome-label';
+        label.style=` top:${biome.el.offsetTop}px; left:${biome.el.offsetLeft}px;`;
+
+        overlay.appendChild(label);
+    })
 }

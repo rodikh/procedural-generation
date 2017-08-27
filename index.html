@@ -13,11 +13,36 @@
             height: 20px;
         }
 
+        .biome-label {
+            position:absolute;
+            white-space:nowrap;
+            margin-left:-50%;
+            background: #ffffff;
+            padding:5px;
+            border: 1px solid black;
+            opacity: 0.8;
+        }
+
     </style>
 </head>
 <body>
 <div id="mapContainer">
     <table id="map"></table>
+    <div id="overlay" style="position:absolute; top:0; left:0;"></div>
+</div>
+<div id="configurator">
+    <form id="seed-form" action="#">
+        <label for="input-seed">seed:</label>
+        <input type="text" name="seed" id="input-seed">
+        <input type="submit" id="seed-submit">
+    </form>
+    <div>
+        <label>
+            timeout
+            <input type="checkbox" id="shouldTimeout">
+            <input type="number" id="timeout">
+        </label>
+    </div>
 </div>
 <script type="module" src="main.js"></script>
 </body>

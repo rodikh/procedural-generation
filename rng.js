@@ -14,6 +14,7 @@ class RNG {
         this.seed = seed;
         this.hash = {};
         console.log('Randomizer seeded with:', seed);
+        document.querySelector('#input-seed').value = seed;
     }
 
     nextIntForKey(key, min, max) {
@@ -45,7 +46,7 @@ class RNG {
             }
         });
 
-        return tempArr[this.nextIntForKey(key, 0, tempArr.length - 1)];
+        return tempArr[this.nextIntForKey(key, 0, tempArr.length)];
     }
 
 
