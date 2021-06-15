@@ -1,7 +1,7 @@
 /**
  * Created by rodik on 18/08/2017.
  */
-import {BiomeTypes, BiomeCodes, Biome} from "./biomes.js";
+import {BiomeCodes} from "./biomes.js";
 
 export function drawMap(tableData, biomes) {
     var table = document.querySelector('#map');
