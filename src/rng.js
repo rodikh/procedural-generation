@@ -2,7 +2,7 @@
  * Created by rodik on 18/08/2017.
  */
 
-import RNGCore from './lib/rng-js.js';
+import RNGCore from '../lib/rng-js.js';
 
 class RNG {
     constructor() {
